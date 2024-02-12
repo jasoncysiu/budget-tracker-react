@@ -1,17 +1,12 @@
 import React from "react";
+import TransactionCard from './TransactionCard'
 
 const TransactionList = (props) => {
     console.log(props);
 
     const renderTransactionList = props.transactions.map((transaction) => {
       return (
-        <div className="item">
-        <div className="content">
-          <div className="header">{transaction.item}</div>
-          <div>{transaction.cost}</div>
-        </div>
-        <i className="trash alternate outline icon"></i>
-      </div>
+       <TransactionCard transaction = {transaction}/>
       );
     });
     return <div className="ui celled list">{renderTransactionList}</div>;
