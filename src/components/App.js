@@ -2,18 +2,21 @@ import './App.css';
 import Header from './Header';
 import AddTransaction from './AddTransaction';
 import TransactionList from './TransactionList';
+import { useState } from 'react';
 
 function App() {
 
-  const transactions =[
-    {id:1, item : "Hamburger", cost:19},
-    {id:2, item : "Medicine", cost:28},
-]
+  const [transactions, setTransactions] = useState([]);
 
+  const addTransactionHandler = (transaction) => {
+    setTransactions([...transactions, transaction ]);
+    console.log(transaction);
+
+  };
   return (
     <div className="ui container">
       <Header/>
-      <AddTransaction/>
+      <AddTransaction addTransactionHandler={addTransactionHandler} />
       <TransactionList transactions = {transactions}/>
 
     </div>
