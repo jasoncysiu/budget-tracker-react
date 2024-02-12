@@ -16,6 +16,8 @@ class AddTransaction extends React.Component {
     this.setState({ item: "", cost: "" });
   };
 
+  
+
   render() {
     return (
       <div className="ui main">
