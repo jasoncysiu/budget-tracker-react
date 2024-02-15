@@ -16,6 +16,14 @@ function App() {
 
   };
 
+  const removeTransactionHandler = (id) => {
+    const newTransactions = transactions.filter((transaction) => {
+      return transaction.id !== id;
+    });
+
+    setTransactions(newTransactions);
+  };
+
   useEffect(() => {
     const retriveTransactions = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY));
     if (retriveTransactions) setTransactions(retriveTransactions);
@@ -28,7 +36,7 @@ function App() {
     <div className="ui container">
       <Header/>
       <AddTransaction addTransactionHandler={addTransactionHandler} />
-      <TransactionList transactions = {transactions}/>
+      <TransactionList transactions = {transactions} getTransactionId = {removeTransactionHandler}/>
 
     </div>
   );
