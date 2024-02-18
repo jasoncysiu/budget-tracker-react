@@ -1,53 +1,59 @@
-import React from "react";
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-class AddTransaction extends React.Component {
-  state = {
-    item: "",
-    cost: "",
-  };
+function AddTransaction(props) {
+  const [item, setItem] = useState('');
+  const [cost, setCost] = useState('');
+  const navigate = useNavigate();
 
-  add = (e) => {
+  const add = (e) => {
     e.preventDefault();
-    if (this.state.item === "" || this.state.cost === "") {
+    if (item === "" || cost === "") {
       alert("All the fields are mandatory!");
       return;
     }
-    this.props.addTransactionHandler(this.state);
-    this.setState({ item: "", cost: "" });
+    props.addTransactionHandler({ item, cost });
+    setItem("");
+    setCost("");
+    navigate("/");
   };
 
-  
+  const handleCostChange = (e) => {
+    const input = e.target.value;
+    // Check if input is a valid number
+    if (!isNaN(input)) {
+      setCost(input); // Update state only if input is a valid number
+    }
+  };
 
-  render() {
-    return (
-      <div className="ui main">
-        <h2>Add Transaction</h2>
-        <form className="ui form" onSubmit={this.add}>
-          <div className="field">
-            <label>Item</label>
-            <input
-              type="text"
-              name="Item"
-              placeholder="Item"
-              value={this.state.item}
-              onChange={(e) => this.setState({ item: e.target.value })}
-            />
-          </div>
-          <div className="field">
-            <label>Cost</label>
-            <input
-              type="text"
-              name="Cost"
-              placeholder="Cost"
-              value={this.state.cost}
-              onChange={(e) => this.setState({ cost: e.target.value })}
-            />
-          </div>
-          <button className="ui button blue" type="submit">Add</button>
-        </form>
-      </div>
-    );
-  }
+  return (
+    <div className="ui main">
+      <h2>Add Transaction</h2>
+      <form className="ui form" onSubmit={add}>
+        <div className="field">
+          <label>Item</label>
+          <input
+            type="text"
+            name="Item"
+            placeholder="Item"
+            value={item}
+            onChange={(e) => setItem(e.target.value)}
+          />
+        </div>
+        <div className="field">
+          <label>Cost</label>
+          <input
+            type="text"
+            name="Cost"
+            placeholder="Enter a number"
+            value={cost}
+            onChange={handleCostChange}
+          />
+        </div>
+        <button className="ui button blue" type="submit">Add</button>
+      </form>
+    </div>
+  );
 }
 
 export default AddTransaction;
