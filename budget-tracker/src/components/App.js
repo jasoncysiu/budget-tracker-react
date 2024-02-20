@@ -13,6 +13,8 @@ function App() {
   const LOCAL_STORAGE_KEY = "transactions";
 
   const [transactions, setTransactions] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
 
     // retrieve Transactions
     const retrieveTransactions = async () => {
@@ -47,6 +49,21 @@ function App() {
       setTransactions(newTransactionList);
     };
 
+    const searchHandler = (searchTerm) => {
+      setSearchTerm(searchTerm);
+      if (searchTerm !== "") {
+        const newTransactionList = transactions.filter((transaction) => {
+          return Object.values(transaction)
+            .join(" ")
+            .toLowerCase()
+            .includes(searchTerm.toLowerCase());
+        });
+        setSearchResults(newTransactionList);
+      } else {
+        setSearchResults(transactions);
+      }
+    }
+
   useEffect(() => {
     const getAllTransactions = async () => {
       const allTransactions = await retrieveTransactions();
@@ -73,7 +90,7 @@ function App() {
           <Route
             path="/"
             element={
-              <TransactionList transactions={transactions} getTransactionId={removeTransactionHandler}/>
+              <TransactionList transactions={searchTerm.length < 1 ? transactions : searchResults } getTransactionId={removeTransactionHandler}  term = {searchTerm} searchKeyword = {searchHandler} />
             }
           />
            <Route path="/edit/:id" element={<EditTransaction updateTransactionHandler={updateTransactionHandler} />} />
