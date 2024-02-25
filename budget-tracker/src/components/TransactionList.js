@@ -8,7 +8,6 @@ const TransactionList = (props) => {
   const deleteTransactionHandler = (id) => {
     props.getTransactionId(id);
   };
-  console.log("asdad", props);
 
   const renderTransactionList = props.transactions.map((transaction) => {
     return (
@@ -36,7 +35,7 @@ const TransactionList = (props) => {
           <input
             ref={inputElement}
             type="text"
-            placeholder="Search Contacts"
+            placeholder="Search Transaction"
             className="prompt"
             value={props.term}
             onChange={getSearchTerm}
@@ -48,7 +47,7 @@ const TransactionList = (props) => {
       <div className="ui celled list">
         {renderTransactionList.length > 0
           ? renderTransactionList
-          : "No Contacts available"}
+          : "No Transactions available"}
       </div>
     </div>
   );

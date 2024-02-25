@@ -1,11 +1,6 @@
 {
   "transactions": [
     {
-      "id": "c2af9e30-dafc-4a51-8bef-373d3a5367b7",
-      "item": "aasdjkna",
-      "cost": "123123"
-    },
-    {
       "id": "d60965b2-459d-49d3-8abd-1b8d9cf17730",
       "item": "Ipad",
       "cost": "12133"
@@ -14,6 +9,11 @@
       "id": "e24bb2e4-37f4-4cfe-8faa-524076620cf7",
       "item": "Paper",
       "cost": "999"
+    },
+    {
+      "id": "ebd846f2-8a4b-4a4a-9002-7d5f9f7fdc38",
+      "item": "khui",
+      "cost": "7777"
     }
   ]
 }
