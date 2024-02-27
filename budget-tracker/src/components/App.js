@@ -11,8 +11,7 @@ import EditTransaction from "./EditTransaction";
 
 function App() {
   const LOCAL_STORAGE_KEY = "transactions";
-  const [item, setItem] = useState('');
-  const [cost, setCost] = useState('');
+
   const [transactions, setTransactions] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState([]);
@@ -20,46 +19,52 @@ function App() {
   // retrieve Transactions
   const retrieveTransactions = async () => {
     const response = await api.get("/transactions");
-    console.log("Retrieving: ",response)
+    console.log("Retrieving: ", response);
     return response.data;
   };
 
-
-
   const addTransactionHandler = async (transaction) => {
-
     const request = {
       id: uuid(),
       ...transaction,
     };
     console.log("testing--", request);
 
-    api.post('/transactions', {request})
-    .then(response => {
-      console.log("data successfully sent to server"); // Handle success
-    })
-    .catch(error => {
-      console.error(error); // Handle error
-    });
-
+    api
+      .post("/transactions", { request })
+      .then((response) => {
+        console.log("data successfully sent to server"); // Handle success
+      })
+      .catch((error) => {
+        console.error(error); // Handle error
+      });
 
     setTransactions([...transactions, request]);
     console.log("testing 2", request);
-
   };
+
+  // const updateTransactionHandler = async (transaction) => {
+  //   const response = await api.put(
+  //     `/transactions/${transaction.id}`,
+  //     transaction
+  //   );
+  //   setTransactions(
+  //     transactions.map((c) => {
+  //       return c.id === transaction.id ? { ...response.data } : c;
+  //     })
+  //   );
+  //   // Navigate back to transaction list or handle UI update accordingly
+  // };
 
   const updateTransactionHandler = async (transaction) => {
-    const response = await api.put(
-      `/transactions/${transaction.id}`,
-      transaction
-    );
-    setTransactions(
-      transactions.map((c) => {
-        return c.id === transaction.id ? { ...response.data } : c;
-      })
-    );
-    // Navigate back to transaction list or handle UI update accordingly
+    // API call to update the transaction
+    await api.put(`/transactions/${transaction.id}`, transaction);
+    // Fetch the updated list of transactions
+    const updatedTransactions = await retrieveTransactions();
+    // Update state with the updated list
+    setTransactions(updatedTransactions);
   };
+  
 
   // remove transaction
   const removeTransactionHandler = async (id) => {
@@ -121,14 +126,17 @@ function App() {
               />
             }
           />
+
           <Route
             path="/edit/:id"
             element={
               <EditTransaction
                 updateTransactionHandler={updateTransactionHandler}
+                transactions={transactions}
               />
             }
           />
+
           <Route
             path="/transaction/:id"
             element={<TransactionDetail transactions={transactions} />}

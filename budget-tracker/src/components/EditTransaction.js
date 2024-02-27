@@ -45,7 +45,9 @@ const EditTransaction = ({ updateTransactionHandler, transactions }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (transaction.item && transaction.cost) {
-      updateTransactionHandler(transaction);
+      updateTransactionHandler({
+        ...transaction,
+      });
       navigate('/');
     }
   };
