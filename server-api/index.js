@@ -90,4 +90,53 @@ app.post("/transactions", async (req, res) => {
     res.status(201).send("Transaction added successfully!");
   });
 
+
+  app.put("/transactions/:id", async (req, res) => {
+    const transactionId = req.params.id; // Get the transaction ID from the URL
+    const { cost, item } = req.body; // Assuming you want to update cost and/or item
+
+    const googleSheets = await initializeGoogleSheetsClient();
+
+    // Read the existing data
+    const readResponse = await googleSheets.spreadsheets.values.get({
+      auth,
+      spreadsheetId,
+      range: "Sheet1!A:C",
+    });
+
+    let data = transformData(readResponse.data);
+    let found = false;
+
+    // Update the data if the id matches
+    const updatedData = data.map(transaction => {
+      if (transaction.id === transactionId) {
+        found = true;
+        return { ...transaction, cost: cost ?? transaction.cost, item: item ?? transaction.item };
+      }
+      return transaction;
+    });
+
+    if (!found) {
+      res.status(404).send("Transaction not found.");
+      return;
+    }
+
+    // Transform the updated data back into a 2D array suitable for Google Sheets
+    const values = updatedData.map(transaction => [transaction.id, transaction.item, transaction.cost]);
+
+    // Write the updated data back to the sheet, including the headers
+    await googleSheets.spreadsheets.values.update({
+      auth,
+      spreadsheetId,
+      range: "Sheet1!A:C",
+      valueInputOption: "USER_ENTERED",
+      resource: {
+        values: [["id", "item", "cost"], ...values],
+      },
+    });
+
+    res.send("Transaction updated successfully.");
+});
+
+
 app.listen(port, (req, res) => console.log("running on 1337"));
