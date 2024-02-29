@@ -6,7 +6,9 @@ const TransactionList = (props) => {
   const inputElement = useRef("");
 
   const deleteTransactionHandler = (id) => {
-    props.getTransactionId(id);
+    if(window.confirm("Are you sure you want to delete this transaction?")) {
+      props.getTransactionId(id);
+    }
   };
 
   const renderTransactionList = props.transactions.map((transaction) => {
