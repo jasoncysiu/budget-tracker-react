@@ -139,4 +139,82 @@ app.post("/transactions", async (req, res) => {
 });
 
 
+
+
+app.delete('/transactions/:id', async (req, res) => {
+  const transactionId = req.params.id; // ID of the transaction to delete
+  const googleSheets = await initializeGoogleSheetsClient();
+  
+  // Read the existing data to find the row number
+  const readResponse = await googleSheets.spreadsheets.values.get({
+    spreadsheetId,
+    range: "Sheet1!A:C",
+  });
+
+  const data = readResponse.data.values;
+  let rowIndex = -1; // Initialize rowIndex
+
+  // Assuming the first column in your sheet contains transaction IDs
+  data.forEach((row, index) => {
+    if (row[0] == transactionId) {
+      rowIndex = index; // Sheets API uses 0-based indexing, but A1 notation starts at 1
+      return;
+    }
+  });
+
+  if (rowIndex === -1) {
+    res.status(404).send('Transaction not found.');
+    return;
+  }
+
+  // Adjust rowIndex for A1 notation
+  rowIndex += 1;
+
+  // Perform the deletion using the correct sheetId
+  await googleSheets.spreadsheets.batchUpdate({
+    spreadsheetId,
+    resource: {
+      requests: [{
+        deleteDimension: {
+          range: {
+            sheetId: 193855751, // Use the numeric sheetId for Sheet1
+            dimension: "ROWS",
+            startIndex: rowIndex - 1, // Convert to 0-based index for the API
+            endIndex: rowIndex // endIndex is exclusive; this deletes the row at startIndex
+          }
+        }
+      }]
+    }
+  });
+
+  res.send('Transaction deleted successfully.');
+});
+
+
+
 app.listen(port, (req, res) => console.log("running on 1337"));
+
+
+
+
+// ------------- other helper functions
+
+// When I was perforinmg deletion, I stuck in finding the correct id of the tab "Sheet1" - note that SpresheetSheetid is not sheetId, sheetid is tabid
+//   async function findSheetId(googleSheets, spreadsheetId) {
+//     try {
+//       const { data } = await googleSheets.spreadsheets.get({
+//         spreadsheetId,
+//       });
+  
+//       data.sheets.forEach(sheet => {
+//         console.log(`Sheet title: ${sheet.properties.title}, Sheet ID: ${sheet.properties.sheetId}`);
+//       });
+  
+//       // This will log all sheet titles and their IDs,
+//       // allowing you to find the numeric sheetId for the sheet you want to manipulate.
+//     } catch (error) {
+//       console.error("Error fetching sheet details:", error);
+//     }
+//   }
+
+//   findSheetId(googleSheets, "15QgBBOq8dRSqHpf6AE3-rQg24on-kOBZKEIwI0Bd8k8");

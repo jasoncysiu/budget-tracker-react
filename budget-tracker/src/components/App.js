@@ -43,19 +43,6 @@ function App() {
     console.log("testing 2", request);
   };
 
-  // const updateTransactionHandler = async (transaction) => {
-  //   const response = await api.put(
-  //     `/transactions/${transaction.id}`,
-  //     transaction
-  //   );
-  //   setTransactions(
-  //     transactions.map((c) => {
-  //       return c.id === transaction.id ? { ...response.data } : c;
-  //     })
-  //   );
-  //   // Navigate back to transaction list or handle UI update accordingly
-  // };
-
   const updateTransactionHandler = async (transaction) => {
     // API call to update the transaction
     await api.put(`/transactions/${transaction.id}`, transaction);
